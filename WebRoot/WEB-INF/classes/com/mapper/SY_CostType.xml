@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.SY_CostTypeDao">
+	<select id="selcosttype" resultType="sY_CostType">
+		SELECT * FROM sY_CostType where  kind = 0 and Disabled=0
+	</select>
+	
+			<select id="selcosttypek" resultType="sY_CostType" >
+		SELECT * FROM sY_CostType where kind=1 and Disabled=0
+	</select>
+	
+	
+		<select id="selcosttypeid" resultType="sY_CostType" parameterType="int">
+		SELECT * FROM sY_CostType where id=#{id}
+	</select>
+	
+	<update id="updatecost" parameterType="sY_CostType"  >
+		update sY_CostType set  kind=#{kind},code=#{code},costTypeName=#{costTypeName},
+		fullName=#{fullName},price=#{price},surchargeText=#{surchargeText},remark=#{remark},
+		disabled=#{disabled} where id=#{id}
+	</update>
+	
+	<update id="updatecostdis" parameterType="int"  >
+		update sY_CostType set disabled=1 where id=#{id}
+	</update>
+	<insert id="addcosttype" parameterType="sY_CostType">
+		insert into sY_CostType
+		values(#{kind},#{code},#{costTypeName},#{fullName},#{price},#{surchargeText},#{remark},#{disabled})
+	</insert>
+	<delete id="delcosttype" parameterType="int">
+		delete sY_CostType where id= #{id}
+	</delete>
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+
+
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+	
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+	">
+
+	<!-- 加载sqlMap.properties文件 -->
+	<context:property-placeholder location="classpath:sqlMap.properties" />
+
+	<!-- 创建数据源 -->
+	<bean name="dateSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${driver}"></property>
+		<property name="url" value="${url}"></property>
+		<property name="username" value="${name}"></property>
+		<property name="password" value="${pwd}"></property>
+	</bean>
+
+
+	<!-- 创建sqlSessionFactory的对象 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 链接数据库 -->
+		<property name="dataSource" ref="dateSource"></property>
+		<!-- 加载mybatis配置文件 -->
+		<property name="configLocation" value="classpath:SqlMapConfig.xml"></property>
+		<!-- 配置mapper.xml -->
+		<property name="mapperLocations" value="classpath:com/mapper/*.xml"></property>
+	</bean>
+
+	<!-- 扫描mapper文件 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.mapper"></property>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 扫描业务逻辑层 -->
+	<context:component-scan base-package="com"></context:component-scan>
+</beans>

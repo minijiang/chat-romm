@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.SY_EmpDao">
+	<select id="logins" resultType="sY_Emp" parameterType="String" >
+		         SELECT * FROM SY_Emp where EmpName=#{empName}
+	</select>
+	
+	<select id="selempdeptid" resultType="sY_Emp" parameterType="int">
+		         SELECT SY_Emp.*,sy_dept.deptName FROM SY_Emp , sy_dept where SY_Emp.deptID=sy_dept.id and SY_Emp.deptID=#{id}
+	</select>
+		<select id="selempid" resultType="sY_Emp" parameterType="int">
+		         SELECT SY_Emp.*,sy_dept.deptName FROM SY_Emp , sy_dept where SY_Emp.deptID=sy_dept.id and SY_Emp.id=#{id}
+	</select>
+		
+		<select id="selemp" resultType="sY_Emp" >
+		         SELECT SY_Emp.*,sy_dept.deptName FROM SY_Emp , sy_dept where SY_Emp.deptID=sy_dept.id and  SY_Emp.id !=0
+	</select>
+	<update id="updatepwd" parameterType="sY_Emp"> 
+	            update SY_Emp  set Pwd=#{pwd} where ID=#{id}
+	</update>
+	
+	<update id="updateemp" parameterType="sY_Emp"> 
+	            update SY_Emp  set empName=#{empName},empNo=#{empNo},pwd=#{pwd},deptID=#{deptID} ,remark=#{remark} where id=#{id}
+	</update>
+	<insert id="addemp"  parameterType="sY_Emp"  > 
+	         insert into SY_Emp values(#{empName},#{empNo},#{pwd},#{deptID},#{remark},#{disabled})
+	</insert>
+	<delete id="delemp" parameterType="int">
+	delete sY_Emp where id= #{id}
+	</delete>
+</mapper>

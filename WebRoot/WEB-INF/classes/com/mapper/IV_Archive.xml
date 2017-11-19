@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.IV_ArchiveDao">
+
+	<select id="seliVArchive" resultType="iV_InvoiceMage" parameterType="iV_InvoiceMage">
+		          SELECT      
+		           top (#{pagesize})
+	                iv_archive.ID,
+			        iv_ininvoice.StartNo,
+			        IV_InInvoice.EndNo,
+			        IV_Archive.Counts as incounts,
+			        IV_OutInvoice.Counts as outcounts,	
+			 		 (select COUNT(*) from IV_Invoice where Archived=1 and OutID=iv_archive.ID) as Archived ,
+			        iv_archive.ArchiveDate as outdate,
+			         (select EmpName from SY_Emp where ID=IV_Invoice.EmpID)  as EmpName,
+			         
+			         (select EmpName from SY_Emp where ID= IV_OutInvoice.EmpID)  as outEmpName
+			         FROM
+		iv_ininvoice,iv_invoice,iv_outinvoice,iv_archive
+		WHERE
+		    iv_invoice.InvoiceNo=iv_ininvoice.StartNo
+		AND iv_ininvoice.ID=iv_outinvoice.InID
+		AND iv_archive.InID= iv_ininvoice.ID
+		
+		and iv_invoice.InvoiceNo not in ( SELECT  top ((#{pagesize})*#{curpage}) iv_invoice.InvoiceNo FROM
+		iv_ininvoice,iv_invoice,iv_outinvoice,iv_archive
+		WHERE
+		    iv_invoice.InvoiceNo=iv_ininvoice.StartNo
+		AND iv_ininvoice.ID=iv_outinvoice.InID
+		AND iv_archive.InID= iv_ininvoice.ID)
+ 
+	</select>
+	
+	<select id="amaxcurpage" parameterType="double" resultType="int">
+	 SELECT  CEILING( (COUNT(*)/#{pagesize})) FROM
+		iv_ininvoice,iv_invoice,iv_outinvoice,iv_archive
+		WHERE  iv_invoice.InvoiceNo=iv_ininvoice.StartNo
+		AND iv_ininvoice.ID=iv_outinvoice.InID
+		AND iv_archive.InID= iv_ininvoice.ID
+	</select>
+	
+	<select id="seliVArchiveID" resultType="iV_Archive" parameterType="int">
+		          select * from IV_Archive id = #{id}
+	</select>
+
+    <insert id="addiVArchive" parameterType="iV_Archive" >
+   insert into IV_Archive  values(#{empID},#{inID},#{startNo},#{endNo},#{counts},GETDATE(),#{archiveEmpID})
+    </insert>
+    
+    <select id="seliVArchiveName" resultType="iV_Archive" parameterType="iV_Archive">
+		        select * from IV_Archive where startNo= #{startNo} or  endNo= #{endNo}
+	</select>
+</mapper>

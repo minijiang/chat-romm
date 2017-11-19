@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<package name="com.entity"/>
+	</typeAliases>
+
+	<mappers>
+		<mapper class="com.mapper.SY_EmpDao"/>
+		<mapper class="com.mapper.SY_AreaDao"/>
+		<mapper class="com.mapper.SY_MeterDaoType"/>
+		<mapper class="com.mapper.SY_DeptDao"/>
+		<mapper class="com.mapper.SY_CostTypeDao"/>
+		<mapper class="com.mapper.SY_SurchargeDao"/>
+		<mapper class="com.mapper.SY_MenuDao"/>
+		<mapper class="com.mapper.IV_InvoiceDao"/>
+		<mapper class="com.mapper.IV_InInvoiceDao"/>
+		<mapper class="com.mapper.IV_OutInvoiceDao"/>
+		<mapper class="com.mapper.IV_ArchiveDao"/>
+	</mappers>
+	
+</configuration>

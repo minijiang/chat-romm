@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.IV_OutInvoiceDao">
+
+
+<!-- 查询发票使用情况汇总表 -->
+	<!-- 有复杂条件时 -->
+	<sql id="count">
+
+	
+	<if test="used >=0">
+	and iv_invoice.used=#{used}
+	</if>
+	<if test="invoiceType >=0">
+	and iv_invoice.invoiceType=#{invoiceType}
+	</if>
+	<if test="invalid >=0">
+	and iv_invoice.invalid=#{invalid}
+	</if>
+		<if test="archived >=0">
+	and iv_invoice.archived=#{archived}
+	</if>
+	<if test="empid!=0">
+	and iv_invoice.empID=#{empid}
+	</if>
+	</sql>
+	
+	<sql id="invoiceNo">
+		<if test="startNo!=null or endNo!=null">
+			and invoiceNo BETWEEN #{startNo} AND #{endNo}
+		</if>
+	</sql>	
+	
+	<!-- 条件只是时间段时 -->
+	<sql id="UseDate">
+		<if test="outDate!=nullinDate!=null">
+			and UseDate BETWEEN #{outDate} AND #{inDate}
+		</if>
+	</sql> 
+	<select id="selivOutInvoice" resultType="iV_OutInvoice">
+		        select  b.* ,
+			 (select COUNT(*) from IV_Invoice where Archived=1 and OutID=b.ID) as Archived,
+			 (select COUNT(*) from IV_Invoice where Invalid=1 and OutID=b.ID) as Invalid,
+			 (select COUNT(*) from IV_Invoice where Used=1 and OutID=b.ID) as used ,
+			 (select EmpName from SY_Emp where ID=b.EmpID)  as outEmpName,
+			 c.EmpName as empName
+			  from  IV_OutInvoice b , SY_Emp c where b.OutEmpID=c.ID
+	</select>
+	
+	<select id="selout" resultType="iV_OutInvoice" parameterType="iV_InvoiceMage">
+	
+       SELECT COUNT(*) AS Archived,(SELECT COUNT(*) FROM iv_invoice,py_pay WHERE iv_invoice.Used=1 <include refid="count"/>) AS Used,
+		(SELECT COUNT(*) FROM iv_invoice WHERE iv_invoice.Archived=1 <include refid="count"/>) AS Invalid FROM
+		iv_invoice,py_pay
+		<where>1=1
+		<include refid="count"/>
+		</where>
+	</select>
+	
+	
+		<!-- 只有发票号码片段是 -->
+	<select id="findByInvoiceNo" resultType="iv_invoice"  parameterType="iV_InvoiceMage">
+		SELECT (MIN(InvoiceNo)) as invoiceNo,(MAX(InvoiceNo)) as invoiceNo1,(COUNT(*)) as archived,
+		(SELECT COUNT(*) FROM iv_invoice WHERE Used=1 <include refid="invoiceNo" />) as used,
+		(SELECT COUNT(*) FROM iv_invoice WHERE Invalid=0 <include refid="invoiceNo" />) as invalid
+		FROM iv_invoice
+		<where>
+			1=1
+			<include refid="invoiceNo" />
+		</where>
+	</select>
+
+	<select id="findDate" resultType="iv_invoice"  parameterType="iV_InvoiceMage">
+		SELECT (MIN(UseDate)) as UseDate,(MAX(UseDate)) as invalidDate,(COUNT(*)) as archived,
+		(SELECT	COUNT(*) FROM iv_invoice WHERE Used=1 <include refid="UseDate" />) as used,
+		(SELECT COUNT(*) FROM iv_invoice WHERE Invalid=0 <include refid="UseDate" />) as invalid
+		FROM iv_invoice
+		<where>
+		1=1
+		<include refid="UseDate" />
+		</where>	
+	</select>
+	
+	<select id="iv_reutp"  resultType="i_P_U" parameterType="iV_InvoiceMage">
+	
+		select top ( #{pagesize}) 
+		    IV_Invoice.InvoiceType,
+		    IV_Invoice.InvoiceNo,
+		    IV_Invoice.Used,
+		    IV_Invoice.ArchiveID,
+			p.PayNo,
+			u.UserName,
+			p.PayMoney,
+			p.PayDate,(select EmpName from sy_emp where id=p.EmpID) as EmpName 
+		  from IV_Invoice  , PY_Pay p  , US_User u 
+		where IV_Invoice.EmpID=p.EmpID and u.UserNo=p.UserNo <include  refid="count" />
+	    and IV_Invoice.InvoiceNo not in 
+	    (select top (#{pagesize}*(#{curpage})) IV_Invoice.InvoiceNo
+	     from IV_Invoice  , PY_Pay p  , US_User u 
+	     where IV_Invoice.EmpID=p.EmpID and u.UserNo=p.UserNo  <include  refid="count" /> )
+	</select>
+	
+	<select id="maxpage" parameterType="double" resultType="int">
+	select CEILING(count(*)/#{pagesize}) from IV_Invoice a , PY_Pay p  , US_User u where a.EmpID=p.EmpID and u.UserNo=p.UserNo                                
+	</select>
+	
+	<select id="selinOutid" resultType="iV_OutInvoice" parameterType="int">
+		         SELECT * FROM IV_OutInvoice  where id = #{id}
+	</select>
+
+    <insert id="addivOutin" parameterType="iV_OutInvoice" >
+    insert into IV_OutInvoice values(#{empID},#{inID},#{startNo},#{endNo},#{counts},GETDATE(),#{outEmpID})
+    </insert>
+    
+    <select id="selivinInvoiceName" resultType="iV_OutInvoice" parameterType="iV_OutInvoice">
+		         SELECT * FROM iV_OutInvoice  where startNo= #{startNo} or  endNo= #{endNo}
+	</select>
+	
+		
+</mapper>

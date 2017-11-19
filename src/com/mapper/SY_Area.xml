@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.SY_AreaDao">
+
+	<select id="selArea" resultType="sY_Area">
+		         SELECT * FROM sY_Area  
+	</select>
+	<select id="selAread" resultType="sY_Area" parameterType="int">
+		         SELECT * FROM sY_Area  where id = #{id}
+	</select>
+	<delete id="delArea" parameterType="int">
+	             delete sY_Area where id = #{id}
+	</delete>
+	
+	<insert id="addarea" parameterType="sY_Area">
+	insert into sY_Area values(#{areaName},#{remark},#{disabled})
+	</insert>
+	
+		<select id="selAreaid" resultType="sY_Area"  parameterType="int" >
+		         SELECT * FROM sY_Area where id = #{id}
+	</select>
+	
+	<update id="updatearea" parameterType="sY_Area">
+	update sY_Area set areaName=#{areaName} ,remark=#{remark},disabled=#{disabled} where id=#{id}
+	</update>
+</mapper>

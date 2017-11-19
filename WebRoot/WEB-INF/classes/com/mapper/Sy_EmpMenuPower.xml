@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wmms.mapper.Sy_EmpMenuPowerDao">
+
+	<insert id="addEmpMenuPower" parameterType="sy_EmpMenuPower">
+		INSERT INTO sy_empmenupower VALUES(#{empID},#{menuID})
+	</insert>
+	
+	<delete id="deleteEmpMenuPower" parameterType="int">
+		delete from sy_empmenupower where empID=#{empID}
+	</delete>
+</mapper>

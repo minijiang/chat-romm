@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.SY_SurchargeDao">
+	<select id="selectSY_Surcharge" resultType="sY_CostType" parameterType="int">
+		SELECT * FROM  SY_CostType where Disabled=0
+		
+	</select>
+	
+	<select id="selectSY_Surchargeid" resultType="sY_CostType" parameterType="int">
+		SELECT * FROM  SY_CostType where id=#{id}
+		
+	</select>
+	
+	<update id="updatec" parameterType="int">
+	    update SY_CostType set Disabled=0 where ID=#{id} 
+	</update>
+</mapper>

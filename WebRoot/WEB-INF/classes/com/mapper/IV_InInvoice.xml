@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.IV_InInvoiceDao">
+
+	<select id="selivinInvoice" resultType="iV_InvoiceMage">
+		    SELECT 
+			        iv_ininvoice.Counts as incounts,
+			        IV_OutInvoice.Counts as outcounts,
+			         (select COUNT(*) from IV_Invoice where Archived=1 and OutID=iv_outinvoice.ID) as Archived,
+			 (select COUNT(*) from IV_Invoice where Invalid=1 and OutID=iv_outinvoice.ID) as Invalid,
+			 (select COUNT(*) from IV_Invoice where Used=1 and OutID=iv_outinvoice.ID) as used ,
+			         (select EmpName from SY_Emp where ID=IV_Invoice.EmpID)  as EmpName
+			         FROM
+		iv_ininvoice,iv_invoice,iv_outinvoice,sy_emp,iv_archive
+		WHERE
+		iv_invoice.InID=iv_ininvoice.ID
+		AND iv_invoice.OutID=iv_outinvoice.ID
+		AND sy_emp.ID=iv_ininvoice.InEmpID
+		AND
+		iv_archive.ID=iv_invoice.ArchiveID
+		AND iv_archive.InID=iv_ininvoice.ID 
+		
+	</select>
+
+	<select id="selivIninid" resultType="iV_InInvoice" parameterType="int">
+		SELECT * FROM IV_InInvoice where id =#{id}
+	</select>
+	<insert id="addivinin" parameterType="iV_InInvoice">
+		insert into IV_InInvoice  values(#{invoiceType},#{startNo},#{endNo},#{counts},GETDATE(),#{inEmpID})
+	</insert>
+
+	<select id="selivinInvoiceName" resultType="iV_InInvoice" parameterType="iV_InInvoice">
+		SELECT * FROM IV_InInvoice where startNo= #{startNo} 
+	</select>
+</mapper>

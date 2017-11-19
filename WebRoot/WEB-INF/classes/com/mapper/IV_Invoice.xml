@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.IV_InvoiceDao">
+
+
+	<select id="selinMage" resultType="iV_InvoiceMage" parameterType="iV_InvoiceMage">
+	
+	        SELECT top (#{pagesize})  
+	                IV_InInvoice.InvoiceType,
+			        iv_ininvoice.StartNo,
+			        IV_InInvoice.EndNo,
+			        iv_ininvoice.Counts as incounts,
+			         (select Counts from iv_outinvoice where InID = IV_InInvoice.ID)as outcounts,
+			       (select COUNT(*) from IV_Invoice where Archived=1 and InID=IV_InInvoice.ID) as Archived,
+			        (select COUNT(*) from IV_Invoice where Invalid=1 and InID=IV_InInvoice.ID) as Invalid,
+			 		(select COUNT(*) from IV_Invoice where Used=1 and InID=IV_InInvoice.ID) as used ,
+			        IV_InInvoice.InDate,
+			         (select EmpName from SY_Emp where ID=IV_InInvoice.InEmpID)  as EmpName
+			         FROM  iv_ininvoice  WHERE	    
+			          iv_ininvoice.id not in ( SELECT  top ((#{pagesize})*(#{curpage})) id FROM  iv_ininvoice  order by  ID desc)   order by  ID desc
+	</select>
+	
+	<select id="maxpagei" parameterType="double" resultType="int">
+	 SELECT  CEILING(count(*)/(#{pagesize})) FROM
+		    iv_ininvoice,iv_outinvoice,iv_archive  WHERE iv_archive.InID=iv_ininvoice.ID and iv_ininvoice.ID =IV_OutInvoice.InID
+	
+	</select>
+	
+    <insert id="addivIn"  parameterType="iV_Invoice">
+      insert into IV_Invoice values(#{invoiceNo},#{invoiceType},#{empID},#{inID},0,0,1,getdate(),0,null,0,null)
+    </insert>
+    
+     <update id="updateOut"    parameterType="iV_OutInvoice">
+     update IV_Invoice set OutID=#{id} , Invalid=1,InvalidDate=GETDATE() where InvoiceNo between #{startNo}  and  #{endNo}
+    </update>
+    
+       <update id="updateAr"    parameterType="iV_Archive">
+     update IV_Invoice set ArchiveID=#{id}  where InvoiceNo between #{startNo}  and  #{endNo}
+    </update>
+    
+    
+</mapper>

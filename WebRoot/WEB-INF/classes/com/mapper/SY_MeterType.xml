@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.SY_MeterDaoType">
+          <select id="selmeter" resultType="sY_MeterType" >
+          select * from sY_MeterType
+          </select>
+          
+          <delete id="delmeter" parameterType="int">
+          delete sY_MeterType where id=#{id}
+          </delete>
+          
+          
+          <insert  id="addmeter" parameterType="sY_MeterType" >
+                   insert into SY_MeterType values(#{meterTypeName},#{aperture},#{mavValue},#{minValue},#{life},#{remark},#{disabled})
+          </insert>
+          
+             <select id="selmeterid" resultType="sY_MeterType" parameterType="int">
+          select * from sY_MeterType where id =#{id}
+          </select>
+          
+          
+          <update id="updatemeter" parameterType="sY_MeterType">
+          update sY_MeterType set meterTypeName = #{meterTypeName} ,
+          aperture=#{aperture},mavValue=#{mavValue},minValue=#{minValue},
+          life=#{life},remark=#{remark},disabled=#{disabled}  where id=#{id}
+          </update>
+          
+</mapper>

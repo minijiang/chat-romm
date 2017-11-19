@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.SY_MenuDao">
+	<select id="selmenu" resultType="sY_Menu"  parameterType="int">
+		select * from SY_Menu where  ID in (select MenuID from SY_EmpMenuPower where EmpID=#{EmpID} ) 
+	</select>
+	<select id="selmenus" resultType="sY_Menu">
+		SELECT * FROM sy_menu
+	</select>
+	
+	<select id="selectMenuByName"  useCache="false" resultType="sY_Menu">
+		select * from sy_menu where menuName like '%0%' 
+	</select>
+	<update id="updateMenu" parameterType="sY_Menu">
+		update sy_menu set flowID=#{flowID} where menuID=#{menuID}
+	</update>
+	
+	<select id="selmenuid" parameterType="int" resultType="sY_Menu">
+		select * from sy_menu where menuID=#{menuID}
+	</select>
+</mapper>
